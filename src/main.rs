@@ -35,21 +35,19 @@ fn main() {
                 }
 
                 match serde_json::from_str(&line) {
-                    Ok(value) => {
-                        match value {
-                            Value::Object(r) => {
-                                let t: String = r["type"].to_string();
-                                        let count = histogram.entry(t).or_insert(0);
-                                *count += 1;
-                            }
-                            _ => {
-                                let count = histogram
-                                    .entry(String::from("non-json-object"))
-                                    .or_insert(0);
-                                *count += 1;
-                            }
+                    Ok(value) => match value {
+                        Value::Object(r) => {
+                            let t: String = r["type"].to_string();
+                            let count = histogram.entry(t).or_insert(0);
+                            *count += 1;
                         }
-                    }
+                        _ => {
+                            let count = histogram
+                                .entry(String::from("non-json-object"))
+                                .or_insert(0);
+                            *count += 1;
+                        }
+                    },
                     Err(_err) => {
                         let count = histogram.entry(String::from("invalid-json")).or_insert(0);
                         *count += 1;
@@ -68,6 +66,6 @@ fn main() {
         };
     }
 
-    println!("{:?}", histogram);
+    println!("{:#?}", histogram);
     println!("Finished in {} nanoseconds", now.elapsed().as_nanos());
 }
