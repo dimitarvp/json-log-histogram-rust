@@ -1,7 +1,10 @@
 use clap::{App, Arg};
+#[macro_use]
+extern crate prettytable;
+use prettytable::Table;
 use rayon::prelude::*;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
@@ -33,6 +36,7 @@ fn histogram_parallel(file: File) -> HashMap<String, u64> {
 }
 
 fn main() {
+    // Setup a CLI application's metadata and options.
     let cli = App::new("jlh")
         .version("0.1")
         .author("Dimitar P. <mitko.p@gmail.com>")
@@ -50,6 +54,7 @@ on the type field of each record.",
         )
         .get_matches();
 
+    // Open the file specified as a mandatory CLI option or exit if that fails.
     let fname = cli.value_of("INPUT").unwrap();
     let path = Path::new(fname);
     let file = match File::open(&path) {
@@ -57,11 +62,26 @@ on the type field of each record.",
         Ok(file) => file,
     };
 
+    // Produce the histogram and measure how much time it took.
     let now = Instant::now();
     let histogram = histogram_parallel(file);
-
     let eta = now.elapsed();
-    println!("{:#?}", histogram);
+
+    // Copy the histogram in a map with sorted keys.
+    let mut sorted_map: BTreeMap<String, u64> = BTreeMap::new();
+    for (key, val) in histogram.iter() {
+        sorted_map.insert(String::from(key), *val);
+    }
+
+    // Prepare and print a console table with the histogram results.
+    let mut t = Table::new();
+    t.add_row(row![bFg->"Record type", bFg->"Count"]);
+    for (key, val) in sorted_map.iter() {
+        t.add_row(row![key, val]);
+    }
+    t.printstd();
+
+    // Print the time it took to calculate the histogram.
     println!(
         "Finished in {}.{:0>8} seconds",
         eta.as_secs(),
