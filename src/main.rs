@@ -1,12 +1,37 @@
-use serde_json::Value;
+use rayon::prelude::*;
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::env;
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
+use std::sync::Mutex;
 use std::time::Instant;
+
+#[derive(Deserialize, Debug)]
+struct LogLine {
+    #[serde(rename = "type")]
+    typ: String,
+}
+
+fn histogram_parallel(file: File) -> HashMap<String, u64> {
+    let histogram: Mutex<HashMap<String, u64>> = Mutex::new(HashMap::with_capacity(128));
+
+    let reader = BufReader::new(file);
+    reader
+        .lines() // split to lines serially
+        .filter_map(|line: Result<String, _>| line.ok())
+        .par_bridge() // parallelize
+        .filter_map(|line: String| serde_json::from_str(&line).ok()) // filter out bad lines
+        .for_each(|r: LogLine| {
+            let mut map = histogram.lock().unwrap();
+            let count = map.entry(r.typ).or_insert(0);
+            *count += 1;
+        });
+
+    histogram.into_inner().unwrap()
+}
 
 fn main() {
     let now = Instant::now();
@@ -23,49 +48,9 @@ fn main() {
         Ok(file) => file,
     };
 
-    let mut histogram: HashMap<String, u64> = HashMap::with_capacity(128);
+    let histogram = histogram_parallel(file);
 
-    let mut reader = BufReader::new(file);
-    let mut line = String::with_capacity(2048);
-    loop {
-        match reader.read_line(&mut line) {
-            Ok(bytes_read) => {
-                if bytes_read == 0 {
-                    break;
-                }
-
-                match serde_json::from_str(&line) {
-                    Ok(value) => match value {
-                        Value::Object(r) => {
-                            let t: String = r["type"].to_string();
-                            let count = histogram.entry(t).or_insert(0);
-                            *count += 1;
-                        }
-                        _ => {
-                            let count = histogram
-                                .entry(String::from("non-json-object"))
-                                .or_insert(0);
-                            *count += 1;
-                        }
-                    },
-                    Err(_err) => {
-                        let count = histogram.entry(String::from("invalid-json")).or_insert(0);
-                        *count += 1;
-                    }
-                }
-
-                // Clear the buffer so it doesn't grow.
-                line.clear();
-            }
-            Err(_err) => {
-                let count = histogram
-                    .entry(String::from("unreadable-line"))
-                    .or_insert(0);
-                *count += 1;
-            }
-        };
-    }
-
+    let eta = now.elapsed();
     println!("{:#?}", histogram);
-    println!("Finished in {} nanoseconds", now.elapsed().as_nanos());
+    println!("Finished in {}.{:0>8} seconds", eta.as_secs(), eta.subsec_nanos());
 }
