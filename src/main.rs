@@ -46,7 +46,7 @@ on the type field of each record.",
                 .long("file")
                 .takes_value(true)
                 .required(true)
-                .help("The log file to analyze, stdin if omitted"),
+                .help("The JSON log file to analyze"),
         )
         .get_matches();
 
