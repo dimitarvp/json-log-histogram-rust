@@ -48,7 +48,7 @@ The tool prints an aligned text table and a total runtime at the bottom.
 |[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1MB|0.11091947|
 |[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|10MB|0.62043929|
 |[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|100MB|0.643637170|
-|[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1000MB|5.690039287|
+|[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1000MB|5.175781744|
 |[i7-4870HQ @ 2.50GHz](http://www.cpu-world.com/CPUs/Core_i7/Intel-Core%20i7-4870HQ%20Mobile%20processor.html)|1MB|0.07234297|
 |[i7-4870HQ @ 2.50GHz](http://www.cpu-world.com/CPUs/Core_i7/Intel-Core%20i7-4870HQ%20Mobile%20processor.html)|10MB|0.68889124|
 |[i7-4870HQ @ 2.50GHz](http://www.cpu-world.com/CPUs/Core_i7/Intel-Core%20i7-4870HQ%20Mobile%20processor.html)|100MB|0.670027735|
