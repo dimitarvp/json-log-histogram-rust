@@ -31,8 +31,10 @@ To test, you can use one of the files in the `inputs/` folder. They have been ad
 git lfs install
 git lfs fetch
 git lfs checkout
+
 # Decompress.
 gunzip -v inputs/*.gz
+
 # Run the tool with one of: 1MB.json, or 10MB.json, or 100MB.json, or 1000MB.json
 ./target/release/jlh -f inputs/1000MB.json
 ```
