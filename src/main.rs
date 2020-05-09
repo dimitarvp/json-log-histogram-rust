@@ -77,9 +77,7 @@ on the type field of each record.",
 
     // Copy the histogram in a map with sorted keys.
     let mut sorted_map: BTreeMap<String, (usize, usize)> = BTreeMap::new();
-    for (key, val) in histogram.iter() {
-        sorted_map.insert(String::from(key), *val);
-    }
+    sorted_map.extend(histogram.into_iter());
 
     // Prepare and print a console table with the histogram results.
     let mut t = Table::new();
