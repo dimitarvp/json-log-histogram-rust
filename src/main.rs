@@ -17,19 +17,27 @@ struct LogLine {
     typ: String,
 }
 
-fn histogram_parallel(file: File) -> HashMap<String, u64> {
-    let histogram: Mutex<HashMap<String, u64>> = Mutex::new(HashMap::with_capacity(128));
+fn histogram_parallel(file: File) -> HashMap<String, (usize, usize)> {
+    let histogram: Mutex<HashMap<String, (usize, usize)>> =
+        Mutex::new(HashMap::with_capacity(128));
 
     let reader = BufReader::new(file);
     reader
         .lines() // split to lines serially (single thread)
         .filter_map(|line: Result<String, _>| line.ok())
         .par_bridge() // parallelize all lines to dynamically allocated workers
-        .filter_map(|line: String| serde_json::from_str(&line).ok()) // reject non-JSON lines
-        .for_each(|r: LogLine| {
-            let mut map = histogram.lock().unwrap();
-            let count = map.entry(r.typ).or_insert(0);
+        .filter_map(|line: String| {
+            match serde_json::from_str(&line).ok() {
+                Some(record) => Some((record, line.len())),
+                None => None, // reject non-JSON lines
+            }
+        })
+        .for_each(|tuple: (LogLine, usize)| {
+            let (record, len) = tuple;
+            let mut locked_histogram = histogram.lock().unwrap();
+            let (count, bytes) = locked_histogram.entry(record.typ).or_insert((0, 0));
             *count += 1;
+            *bytes += len;
         });
 
     histogram.into_inner().unwrap()
@@ -68,16 +76,16 @@ on the type field of each record.",
     let eta = now.elapsed();
 
     // Copy the histogram in a map with sorted keys.
-    let mut sorted_map: BTreeMap<String, u64> = BTreeMap::new();
+    let mut sorted_map: BTreeMap<String, (usize, usize)> = BTreeMap::new();
     for (key, val) in histogram.iter() {
         sorted_map.insert(String::from(key), *val);
     }
 
     // Prepare and print a console table with the histogram results.
     let mut t = Table::new();
-    t.add_row(row![bFg->"Record type", bFg->"Count"]);
-    for (key, val) in sorted_map.iter() {
-        t.add_row(row![key, val]);
+    t.add_row(row![bFg->"Record type", bFg->"Count", bFg->"Bytes"]);
+    for (key, (count, bytes)) in sorted_map.iter() {
+        t.add_row(row![key, count, bytes]);
     }
     t.printstd();
 
