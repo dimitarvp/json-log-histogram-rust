@@ -10,7 +10,7 @@ A sample input file would be:
 {"type": "B","bar": "abcd"}
 ```
 
-The output histogram would contain a count of 2 for type B and 1 for type A.
+The output histogram would report a count of 2 for type B and 1 for type A. It would also report total of 73 bytes for type B and 26 for type A.
 
 ### How to compile and use
 
@@ -42,10 +42,11 @@ The tool prints an aligned text table and a total runtime at the bottom.
 ### Benchmarks
 
 |CPU|File size|Time in seconds|
-|[W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1MB|0.11091947|
-|[W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|10MB|0.62043929|
-|[W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|100MB|0.643637170|
-|[W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1000MB|5.690039287|
+|-|-|-|
+|[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1MB|0.11091947|
+|[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|10MB|0.62043929|
+|[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|100MB|0.643637170|
+|[Xeon W-2150B @ 3.00GHz](http://www.cpu-world.com/CPUs/Xeon_W/Intel-Xeon%20W%20W-2150B.html)|1000MB|5.690039287|
 |[i7-4870HQ @ 2.50GHz](http://www.cpu-world.com/CPUs/Core_i7/Intel-Core%20i7-4870HQ%20Mobile%20processor.html)|1MB|0.07234297|
 |[i7-4870HQ @ 2.50GHz](http://www.cpu-world.com/CPUs/Core_i7/Intel-Core%20i7-4870HQ%20Mobile%20processor.html)|10MB|0.68889124|
 |[i7-4870HQ @ 2.50GHz](http://www.cpu-world.com/CPUs/Core_i7/Intel-Core%20i7-4870HQ%20Mobile%20processor.html)|100MB|0.670027735|
