@@ -27,10 +27,9 @@ fn histogram_parallel(file: File) -> HashMap<String, (usize, usize)> {
         .filter_map(|line: Result<String, _>| line.ok())
         .par_bridge() // parallelize all lines to dynamically allocated workers
         .filter_map(|line: String| {
-            match serde_json::from_str(&line).ok() {
-                Some(record) => Some((record, line.len())),
-                None => None, // reject non-JSON lines
-            }
+            serde_json::from_str(&line)
+                .ok()
+                .map(|record| (record, line.len()))
         })
         .for_each(|tuple: (LogLine, usize)| {
             let (record, len) = tuple;
