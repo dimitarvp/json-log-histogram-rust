@@ -27,16 +27,7 @@ RUSTFLAGS="-C target-cpu=native" cargo build --release
 
 To test, you can use one of the files in the `inputs/` folder. They have been added to the repository through Git LFS so you have to fetch and checkout them first, and then decompress:
 ```sh
-# Install LFS in the current repo and download the files.
-git lfs install
-git lfs fetch
-git lfs checkout
-
-# Decompress.
-gunzip -v inputs/*.gz
-
-# Run the tool with one of: 1MB.json, or 10MB.json, or 100MB.json, or 1000MB.json
-./target/release/jlh -f inputs/1000MB.json
+./target/release/jlh -f /path/to/json/log/file
 ```
 
 The tool prints an aligned text table and a total runtime at the bottom.
