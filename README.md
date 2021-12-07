@@ -25,7 +25,7 @@ Compile:
 RUSTFLAGS="-C target-cpu=native" cargo build --release
 ```
 
-To test, you can use one of the files in the `inputs/` folder. They have been added to the repository through Git LFS so you have to fetch and checkout them first, and then decompress:
+To test, generate a JSON log file and supply it as a command-line parameter:
 ```sh
 ./target/release/jlh -f /path/to/json/log/file
 ```
